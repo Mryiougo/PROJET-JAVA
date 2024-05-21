@@ -1,0 +1,91 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class RegionsQuiz {
+    private static final Map<String, String> REGIONS_CHEFS_LIEUX = new HashMap<>();
+    private static final int NUM_QUESTIONS = 10;
+    private static final Map<String, Integer> TOP_5_SCORES = new HashMap<>();
+
+    static {
+        REGIONS_CHEFS_LIEUX.put("Agnéby-Tiassa", "Agboville");
+        REGIONS_CHEFS_LIEUX.put("Bafing", "Touba");
+        REGIONS_CHEFS_LIEUX.put("Béré", "Boundiali");
+        REGIONS_CHEFS_LIEUX.put("Bounkani", "Bouna");
+        REGIONS_CHEFS_LIEUX.put("Cavally", "Guiglo");
+        REGIONS_CHEFS_LIEUX.put("Gbêkê", "Bouaké");
+        REGIONS_CHEFS_LIEUX.put("Gôh ", "Gagnoa");
+        REGIONS_CHEFS_LIEUX.put("Guémon ", "Bangolo");
+        REGIONS_CHEFS_LIEUX.put("Hambol ", "Katiola");
+        REGIONS_CHEFS_LIEUX.put("l'Iffou ", "Daoukro");
+        REGIONS_CHEFS_LIEUX.put("Indénié-Djuablin ", "Abengourou");
+        REGIONS_CHEFS_LIEUX.put("Kabadougou ", "Minignan");
+        REGIONS_CHEFS_LIEUX.put("Lacs  ", "Yamoussoukro");
+        REGIONS_CHEFS_LIEUX.put("Loh-Djiboua ", "Divo");
+        REGIONS_CHEFS_LIEUX.put("Marahoué  ", "Bouaflé");
+        REGIONS_CHEFS_LIEUX.put("Moronou  ", "Bongouanou");
+        REGIONS_CHEFS_LIEUX.put("N'Zi", "Dimbokro");
+        REGIONS_CHEFS_LIEUX.put("la Nawa", "Soubré");
+        REGIONS_CHEFS_LIEUX.put("Poro ", "Korhogo");
+        REGIONS_CHEFS_LIEUX.put("San-Pédro ", "San-Pédro");
+        REGIONS_CHEFS_LIEUX.put("Sud-Comoé ", "Aboisso");
+        REGIONS_CHEFS_LIEUX.put("Sud-Bandama ", "Grand-Lahou ");
+        REGIONS_CHEFS_LIEUX.put("Tchologo  ", "Ferkessédougou");
+        REGIONS_CHEFS_LIEUX.put("Tonkpi  ", "Man");
+        REGIONS_CHEFS_LIEUX.put("Vavoua  ", "Vavoua");
+        REGIONS_CHEFS_LIEUX.put("Worodougou ", "Séguéla");
+        REGIONS_CHEFS_LIEUX.put("la Vallée du Bandama  ", "Kong");
+        REGIONS_CHEFS_LIEUX.put("Haut-Sassandra ", "Daloa");
+        REGIONS_CHEFS_LIEUX.put("des Grands Ponts ", "Dabou");
+        REGIONS_CHEFS_LIEUX.put("Zanzan ", "Bondoukou");
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean playAgain = true;
+        while (playAgain) {
+            System.out.print("Entrez votre surnom : ");
+            String playerName = scanner.nextLine();
+
+            int score = 0;
+            for (int i = 0; i < NUM_QUESTIONS; i++) {
+                String region = getRandomRegion();
+                System.out.printf("Quel est le chef-lieu de la région %s ? ", region);
+                String answer = scanner.nextLine();
+                if (answer.equalsIgnoreCase(REGIONS_CHEFS_LIEUX.get(region))) {
+                    System.out.println("Bonne réponse !");
+                    score++;
+                } else {
+                    System.out.printf("Mauvaise réponse. La bonne réponse est %s.%n", REGIONS_CHEFS_LIEUX.get(region));
+                    break;
+                }
+            }
+
+            System.out.printf("%nVotre score est de %d/%d.%n", score, NUM_QUESTIONS);
+            updateTopScores(playerName, score);
+            System.out.println("Voici les 5 meilleurs scores :");
+            int rank = 1;
+            for (Map.Entry<String, Integer> entry : TOP_5_SCORES.entrySet()) {
+                System.out.printf("%d. %s - %d points%n", rank++, entry.getKey(), entry.getValue());
+            }
+
+            System.out.print("Voulez-vous rejouer ? (oui/non) ");
+            String response = scanner.nextLine();
+            playAgain = response.equalsIgnoreCase("oui");
+        }
+    }
+
+    private static String getRandomRegion() {
+        int randomIndex = (int) (Math.random() * REGIONS_CHEFS_LIEUX.size());
+        return (String) REGIONS_CHEFS_LIEUX.keySet().toArray()[randomIndex];
+    }
+
+    private static void updateTopScores(String playerName, int score) {
+        TOP_5_SCORES.put(playerName, score);
+        TOP_5_SCORES.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(java.util.Comparator.reverseOrder()))
+                .limit(5)
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+    }
+}
